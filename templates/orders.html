@@ -1,0 +1,358 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+{% if request.method == 'POST' %}
+<div class="con-pop"  style="display:block;">
+ {% else %}
+<div class="con-pop"style="display:none;">
+{% endif %}
+<div class="container popup">
+    <div style="height: 324px; transition: height 250ms ease 0ms;">
+        <div class="react-reveal linkItemDataCont" style="animation-fill-mode: both; animation-duration: 875ms; animation-delay: 125ms; animation-iteration-count: 1; opacity: 1; animation-name: react-reveal-61475453695474-1;">
+
+                <form action="{% url 'add_cart' %}" name="form" method="post" enctype='multipart/form-data'>
+                            {% csrf_token %}
+                <div class="row">
+                <div class="no-padding imgco col-lg-2 col-md-2 col-sm-2 col-2">
+                    <div class="imgdiv">
+                        <img src="{{img}}" alt="" >
+                        <input name="img" value="{{img}}" hidden>
+                    </div>
+                </div>
+                <div class="no-padding col-lg-8 col-md-8 col-sm-8 col-8">
+                    <div class="datadiv">
+                       <img src="/img/brands/amazon-logo.png" alt="" width="70.8px" >
+                         <input name="logo" value="{{logo}}" hidden>
+                        <h2><input name="title" placeholder="Title" value="{{title}}"></h2>
+                        <a target="_blank" href="{{url}}" name="url">
+                             <input name="url" value="{{url}}" hidden>
+                        {{ url|slice:":80" }} .....
+                        </a>
+                            <div class="form-row">
+                                <div class="col-lg-4 col-md-4 col-sm-6 col-12">
+                                    <label class="form-label">Category
+                                    </label>
+                                    <select class="form-control" name="category">
+                                        <option value="0" disabled="">Select category</option>
+                                        <option value="2">Clothes/Shoes/Bags/Wallets</option>
+                                        <option value="3">Electronics</option>
+                                        <option value="4">Electronics with Bluetooth</option>
+                                        <option value="5">Laptops/Computers</option>
+                                        <option value="6">Game Consoles</option>
+                                        <option value="7">Video Games</option>
+                                        <option value="8">Mobile Phone/Tablet</option>
+                                        <option value="9">Mobile Accessory/Case/Screen Protector</option>
+                                        <option value="10">Watches/Sunglasses/Eyeglasses</option>
+                                        <option value="11">Cosmetics</option>
+                                    </select>
+                                </div>
+                                <div class="col-lg-3 col-md-3 col-sm-6 col-12">
+                                    <label class="form-label">Color</label>
+                                    <input placeholder="Type color" type="text" class="form-control" value="" name="color">
+                                </div>
+                                <div class="col-lg-3 col-md-3 col-sm-6 col-12">
+                                    <label class="form-label">Size</label>
+                                    <input placeholder="Type size" type="text" class="form-control" value="" name="size">
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-sm-6 col-12">
+                                    <label class="form-label">Qty</label>
+                                    <input inputmode="numeric" min="1" type="number" class="form-control" value="1" name="qty">
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="addcol col-lg-2 col-md-2 col-sm-2 col-2">
+                            <div class="form-row mt-5 text-danger">
+                                <div class="col">
+                                    <h5 class="form-label">Price ($)</h5>
+                                    <h6><input name="price" placeholder="Price" value="{{price}}"></h6>
+                                </div>
+                            </div>
+                        <button type="submit" class="btn btn-primary mt-4">
+                            <img src="/img/path.png" alt="" class="mr-2">Add
+                        </button>
+                    </div>
+                </form>
+                </div>
+                <img src="{% static 'images/removefromcat.png' %}" class="removeim" alt="" style="cursor: pointer;">
+            </div>
+        </div>
+    </div>
+    </div>
+
+<div class="container">
+    <div class="container">
+    <div style="height: 324px; transition: height 250ms ease 0ms;" class="edit">
+        <div class="react-reveal linkItemDataCont" style="animation-fill-mode: both; animation-duration: 875ms; animation-delay: 125ms; animation-iteration-count: 1; opacity: 1; animation-name: react-reveal-61475453695474-1;">
+
+                <form action="" name="form" method="post" enctype='multipart/form-data'>
+                            {% csrf_token %}
+                <div class="row">
+                <div class="no-padding imgco col-lg-2 col-md-2 col-sm-2 col-2">
+                    <div class="imgdiv">
+                        <img src="{{img}}" alt="" >
+                        <input name="img" value="{{img}}" hidden>
+                    </div>
+                </div>
+                <div class="no-padding col-lg-8 col-md-8 col-sm-8 col-8">
+                    <div class="datadiv">
+                       <img src="/img/brands/amazon-logo.png" alt="" width="70.8px" >
+                         <input name="logo" value="{{logo}}" hidden>
+                        <h2><input name="title" placeholder="Title" value="{{title}}"></h2>
+                        <a target="_blank" href="{{url}}" name="url">
+                             <input name="url" value="{{url}}" hidden>
+                        {{ url|slice:":80" }} .....
+                        </a>
+                            <div class="form-row">
+                                <div class="col-lg-4 col-md-4 col-sm-6 col-12">
+                                    <label class="form-label">Category
+                                    </label>
+                                    <select class="form-control" name="category">
+                                        <option value="0" disabled="">Select category</option>
+                                        <option value="2">Clothes/Shoes/Bags/Wallets</option>
+                                        <option value="3">Electronics</option>
+                                        <option value="4">Electronics with Bluetooth</option>
+                                        <option value="5">Laptops/Computers</option>
+                                        <option value="6">Game Consoles</option>
+                                        <option value="7">Video Games</option>
+                                        <option value="8">Mobile Phone/Tablet</option>
+                                        <option value="9">Mobile Accessory/Case/Screen Protector</option>
+                                        <option value="10">Watches/Sunglasses/Eyeglasses</option>
+                                        <option value="11">Cosmetics</option>
+                                    </select>
+                                </div>
+                                <div class="col-lg-3 col-md-3 col-sm-6 col-12">
+                                    <label class="form-label">Color</label>
+                                    <input placeholder="Type color" type="text" class="form-control" value="" name="color">
+                                </div>
+                                <div class="col-lg-3 col-md-3 col-sm-6 col-12">
+                                    <label class="form-label">Size</label>
+                                    <input placeholder="Type size" type="text" class="form-control" value="" name="size">
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-sm-6 col-12">
+                                    <label class="form-label">Qty</label>
+                                    <input inputmode="numeric" min="1" type="number" class="form-control" value="1" name="qty">
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="addcol col-lg-2 col-md-2 col-sm-2 col-2">
+                            <div class="form-row mt-5 text-danger">
+                                <div class="col">
+                                    <h5 class="form-label">Price ($)</h5>
+                                    <h6><input name="price" placeholder="Price" value="{{price}}"></h6>
+                                </div>
+                            </div>
+                        <button type="submit" class="btn btn-primary mt-4">
+                            <img src="/img/path.png" alt="" class="mr-2">Add
+                        </button>
+                    </div>
+                </form>
+        </div>
+        <img src="{% static 'images/removefromcat.png' %}" class="removeim" alt="" style="cursor: pointer;">
+    </div>
+</div>
+
+    <div class="cartItems row">
+
+        <div class="paddinginlg col-md-8">
+
+            <h1>My Orders<span> ({{count}} Order/s)</span></h1>
+            {% for product in products %}
+            <form method="post" action="{% url 'edit_itm' product.id %}">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col">
+                        <div class="react-reveal cartItemDataCont" style="animation-fill-mode: both; animation-duration: 1000ms; animation-delay: 0ms; animation-iteration-count: 1; opacity: 1; animation-name: react-reveal-61475453695474-3;">
+                            <div class="row">
+                                <div class="imgco col-lg-3 col-md-3 col-sm-2 col-12">
+                                    <div class="imgdiv"><img tabindex="0" src="{{product.img_url}}"
+                                                             alt="{{product.title}}"
+                                                             class="img" style="cursor: zoom-in; max-width: 130px;"></div>
+                                </div>
+                                <div class="col-lg-7 col-md-7 col-sm-8 col-12">
+                                    <div class="datadiv">
+                                        <img src="/img/brands/amazon-logo.png" alt="" width="70.8px">
+                                        <h2>{{product.title}}</h2>
+                                        <a target="_blank" href="{{product.url}}">{{product.url}}</a>
+                                        <div class="itemData"><h5>
+                                            <span>Category:</span> Mobile Accessory/Case/Screen Protector</h5>
+                                            <h5><span>Color:</span> N/A</h5>
+                                            <h5><span>Size:</span> N/A</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class=" addcol text-center col-lg-2 col-md-2 col-sm-2 col-12">
+                                    <h5 class="h3e">{{product.price}}</h5>
+                                    <form class=""><div class="form-row">
+                                        <div class="col">
+                                            <label class="form-label">Qty</label>
+                                            <input placeholder="2" min="1" type="number" class="form-control" value="1"></div>
+                                    </div>
+                                    </form>
+                                </div>
+
+                            </div>
+                        </div>
+                            <div>
+                                <button type="button" class="editbutton"><img src="{% static 'images/editbutton.png' %}"  class="edititem" alt=""></button>
+                                <a href="{% url 'delete_itm' product.id %}"><img src="{% static 'images/removefromcat.png' %}" class="removeim" alt=""></a>
+                            </div>
+                        </div>
+                    </div>
+                        </form>
+                {%  endfor%}
+                    </div>
+<div class="col-md-8"><div class="checkoutcontent"><h2>Cart <span>(1 Item/s)</span>
+    </h2>
+        <div class="checkoutitems">
+            <div class="row">
+                <div class=" imgco col-lg-3 col-md-3 col-sm-3 col-4">
+                    <div class="imgdiv">
+                        <img src="https://images-na.ssl-images-amazon.com/images/I/81tdHkBsXPL._AC_SX425_.jpg">
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-6 col-8">
+                    <div class="datadiv">
+                        <img src="/img/brands/amazon-logo.png" alt="" width="70.8px">
+                        <h3>1 x Beam Electronics Universal Sma...</h3>
+                    </div>
+                </div>
+                <div class="text-center col-lg-3 col-md-3 col-sm-3 col-12"><h5>Online Price</h5>
+                    <h4>$9.99</h4>
+                </div>
+            </div>
+        </div>
+        <div>
+            <h2>Shipping address</h2>
+            <div class="row">
+                <div class="col">
+                    <div class="addressdiv selectedaddress">
+                        <h5>Address 1</h5>
+                        <span class="span1">Full address:
+                            <span class="span2 spmar"> Beni-Seuef, بنى سويف/سمسطا</span>
+                        </span>
+                        <span class="span1">Floor number:
+                            <span class="span2">
+
+                            </span>
+                        </span>
+                        <span class="span1">Apartment number:
+                            <span class="span2"></span>
+                        </span>
+                    </div>
+                    <button type="button" class="addnewaddress btn btn-primary">Add new address</button>
+                </div>
+            </div>
+        </div>
+        <h2>Payment method</h2>
+        <div>
+            <div>
+                <div class="payment row">
+                    <div class="clodiv col-lg-4 col-md-4 col-sm-4 col-12">
+                        <div class="paymethoddiv paymentvisa selectedpayment">
+                            <img src="/img/visa.png">
+                        </div>
+                    </div>
+                    <div class="clodiv col-lg-4 col-md-4 col-sm-4 col-6">
+                        <div class="paymethoddiv paymentfaw ">
+                            <img src="/img/fawry.png">
+                        </div>
+                    </div>
+                    <div class="clodiv col-lg-4 col-md-4 col-sm-4 col-6">
+                        <div class="paymethoddiv paymentbank ">
+                            <img src="/img/bank.png">
+                            <span class="span1">Bank Transfer</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="Toastify">
+
+                </div>
+            </div>
+            <div class="payment mb-0 row">
+                <div class="no-padding notes col-lg-12 col-md-12 col-sm-12 col-12">
+                    <div class="form-group">
+                        <textarea rows="3" placeholder="Do you have any notes?" class="form-control">
+
+                        </textarea>
+                    </div>
+                </div>
+                <div class="no-padding checkboxs col-lg-12 col-md-12 col-sm-12 col-12"><div>
+                <div class="pretty p-default">
+                    <input type="checkbox">
+                    <div class="state p-warning">
+                        <label>I agree on Gebhaly's  <a target="_blank" href="/terms">Terms &amp; Conditions</a>
+                        </label>
+                    </div>
+                </div>
+            </div>
+                <div>
+                    <div class="pretty p-default">
+                        <input type="checkbox">
+                        <div class="state p-warning">
+                            <label>I agree on International Shipping fees</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="displayprp row">
+            <div class="col-lg-12 col-md-12 col-sm-10 col-12">
+                <button type="button" class="placeOrderButton btn btn-primary">Place order</button>
+            </div>
+        </div>
+    </div>
+    </div>
+</div>
+
+
+        <div class="paddinginlg col-md-4">
+            <div class="breakdowndiv ">
+                <div class="list-group">
+                    <div class="list-group-item">Total Order/s Price<img src="img/tooltipicon.png" class="tooltipicon" alt="">
+                        <span>{{price}}</span>
+                    </div>
+                    <div class="list-group-item">Customs<img src="img/tooltipicon.png" class="tooltipicon" alt="" aria-describedby="tooltip-top"><span>$0</span>
+                    </div>
+                    <div class="list-group-item">VAT<img src="img/tooltipicon.png" class="tooltipicon" alt="" aria-describedby="tooltip-top">
+                        <span>$1.75</span>
+                    </div>
+                    <div class="list-group-item">E-Shhnli Fees<img src="img/tooltipicon.png" class="tooltipicon" alt="">
+                        <span>$2.5</span>
+                    </div>
+                    <div class="list-group-item">Int. Shipping<img src="img/tooltipicon.png" class="tooltipicon" alt=""><span>None</span>
+                    </div>
+                    <div class="list-group-item">Delivery Fees<img src="img/tooltipicon.png" class="tooltipicon" alt="" aria-describedby="tooltip-top"><span>None</span>
+                    </div>
+                    <div class="list-group-item">Subtotal<span>$14.24</span>
+                    </div>
+                    <div class="list-group-item">Discount<span>$0</span></div>
+                    <div class="list-group-item">Total ($)<span>$14.24</span>
+                    </div>
+                </div>
+
+
+
+                <div class="totalcart">
+                    <span class="span1">
+                        <img src="/img/total.png" alt="">
+                        <img src="img/tooltipicon.png" class="tooltipicon" alt="">
+                        <br>
+                        <h4>Total </h4>
+                    </span>
+                    <span class="totalamount">
+                        <span class="span2">250.43 <span class="egpf">EGP</span>
+                        </span>
+                    </span>
+                </div>
+
+            </div>
+            </div>
+        </div>
+    </div>
+ </div>
+{% endblock %}

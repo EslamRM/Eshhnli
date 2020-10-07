@@ -1,0 +1,227 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+{% if request.method == 'POST' %}
+<div class="con-pop"  style="display:block;">
+ {% else %}
+<div class="con-pop"style="display:none;">
+{% endif %}
+<div class="container popup">
+    <div style="height: 324px; transition: height 250ms ease 0ms;">
+        <div class="react-reveal linkItemDataCont" style="animation-fill-mode: both; animation-duration: 875ms; animation-delay: 125ms; animation-iteration-count: 1; opacity: 1; animation-name: react-reveal-61475453695474-1;">
+
+                <form action="{% url 'add_cart' %}" name="form" method="post" enctype='multipart/form-data'>
+                            {% csrf_token %}
+                <div class="row">
+                <div class="no-padding imgco col-lg-2 col-md-2 col-sm-2 col-2">
+                    <div class="imgdiv">
+                        <img src="{{img}}" alt="" >
+                        <input name="img" value="{{img}}" hidden>
+                    </div>
+                </div>
+                <div class="no-padding col-lg-8 col-md-8 col-sm-8 col-8">
+                    <div class="datadiv">
+                       <img src="/img/brands/amazon-logo.png" alt="" width="70.8px" >
+                         <input name="logo" value="{{logo}}" hidden>
+                        <h2><input name="title" placeholder="Title" value="{{title}}"></h2>
+                        <a target="_blank" href="{{url}}" name="url">
+                             <input name="url" value="{{url}}" hidden>
+                        {{ url|slice:":80" }} .....
+                        </a>
+                            <div class="form-row">
+                                <div class="col-lg-4 col-md-4 col-sm-6 col-12">
+                                    <label class="form-label">Category
+                                    </label>
+                                    <select class="form-control" name="category">
+                                        <option value="Select category" disabled="">Select category</option>
+                                        <option value="Clothes/Shoes/Bags/Wallets">Clothes/Shoes/Bags/Wallets</option>
+                                        <option value="Electronics">Electronics</option>
+                                        <option value="Electronics with Bluetooth">Electronics with Bluetooth</option>
+                                        <option value="Laptops/Computers">Laptops/Computers</option>
+                                        <option value="Game Consoles">Game Consoles</option>
+                                        <option value="Video Games">Video Games</option>
+                                        <option value="Mobile Phone/Tablet">Mobile Phone/Tablet</option>
+                                        <option value="Mobile Accessory/Case/Screen Protector">Mobile Accessory/Case/Screen Protector</option>
+                                        <option value="Watches/Sunglasses/Eyeglasses">Watches/Sunglasses/Eyeglasses</option>
+                                        <option value="Cosmetics">Cosmetics</option>
+                                    </select>
+                                </div>
+                                <div class="col-lg-3 col-md-3 col-sm-6 col-12">
+                                    <label class="form-label">Color</label>
+                                    <input placeholder="Type color" type="text" class="form-control"  name="color">
+                                </div>
+                                <div class="col-lg-3 col-md-3 col-sm-6 col-12">
+                                    <label class="form-label">Size</label>
+                                    <input placeholder="Type size" type="text" class="form-control"  name="size">
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-sm-6 col-12">
+                                    <label class="form-label">Qty</label>
+                                    <input inputmode="numeric" min="1" type="number" class="form-control" name="qty">
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="addcol col-lg-2 col-md-2 col-sm-2 col-2">
+                            <div class="form-row mt-5 text-danger">
+                                <div class="col">
+                                    <h5 class="form-label">Price ($)</h5>
+                                    <h6><input name="price" placeholder="Price" value="{{price}}"></h6>
+                                </div>
+                            </div>
+                        <button type="submit" class="btn btn-primary mt-4">
+                            <img src="/img/path.png" alt="" class="mr-2">Add
+                        </button>
+                    </div>
+                </form>
+                </div>
+                <img src="{% static 'images/removefromcat.png' %}" class="removeim" alt="" style="cursor: pointer;">
+            </div>
+        </div>
+    </div>
+    </div>
+
+<div class="container">
+    <div class="addcouponsec top"><h3>Drop your product’s link here</h3>
+        <form method="post" action="{% url 'api' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <input placeholder="Paste your product link: https://www.amazon.com/432221" type="text" class="form-control"  name="url">
+                <button type="submit" class="btn btn-primary get">Get It</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="cartItems row">
+
+        <div class="paddinginlg col-md-8">
+
+            <h1>My items<span> ({{count}} Item/s)</span>
+                <a href="{% url 'clear_cart' %}">
+                <span class="clearcart">
+                    <img src="/img/clearcart.png" alt=""> Clear cart</span></a></h1>
+            {% for order in orders %}
+            <form method="post" action="{% url 'edit_itm' order.id %}">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col">
+                        <div class="react-reveal cartItemDataCont" style="animation-fill-mode: both; animation-duration: 1000ms; animation-delay: 0ms; animation-iteration-count: 1; opacity: 1; animation-name: react-reveal-61475453695474-3;">
+                            <div class="row">
+                                <div class="imgco col-lg-3 col-md-3 col-sm-2 col-12">
+                                    <div class="imgdiv"><img tabindex="0" src="{{order.img_url}}"
+                                                             alt="{{order.title}}"
+                                                             class="img" style="cursor: zoom-in; max-width: 130px;"></div>
+                                </div>
+                                <div class="col-lg-7 col-md-7 col-sm-8 col-12">
+                                    <div class="datadiv">
+                                        <img src="/img/brands/amazon-logo.png" alt="" width="70.8px">
+                                        <h2>{{order.title}}</h2>
+                                        <a target="_blank" href="{{order.url}}">{{order.url}}</a>
+                                        <div class="itemData"><h5>
+                                            <span>Category:</span> {{order.category}}</h5>
+                                            <h5><span>Color:</span> {{order.color}}</h5>
+                                            <h5><span>Size:</span> {{order.size}}</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class=" addcol text-center col-lg-2 col-md-2 col-sm-2 col-12">
+                                    <h5 class="h3e">{{order.price}}</h5>
+                                    <form class=""><div class="form-row">
+                                        <div class="col">
+                                            <label class="form-label">Qty</label>
+                                            <input placeholder="2" min="1" type="number" class="form-control" value="{{order.qty}}"></div>
+                                    </div>
+                                    </form>
+                                </div>
+
+                            </div>
+                        </div>
+
+
+                            <div>
+                                <button type="button" class="editbutton"><img src="{% static 'images/editbutton.png' %}"  class="edititem" alt=""></button>
+                                <a href="{% url 'delete_itm' order.id %}"><img src="{% static 'images/removefromcat.png' %}" class="removeim" alt=""></a>
+                            </div>
+                        </div>
+                    </div>
+                        </form>
+                {%  endfor%}
+                    </div>
+
+
+
+        <div class="paddinginlg col-md-4">
+            <div class="breakdowndiv ">
+                <div class="list-group">
+                    <div class="list-group-item">Total Online Price<img src="img/tooltipicon.png" class="tooltipicon" alt="">
+                        <span>{{price}}</span>
+                    </div>
+                    <div class="list-group-item">Customs<img src="img/tooltipicon.png" class="tooltipicon" alt="" aria-describedby="tooltip-top"><span>$0</span>
+                    </div>
+                    <div class="list-group-item">VAT<img src="img/tooltipicon.png" class="tooltipicon" alt="" aria-describedby="tooltip-top">
+                        <span>$1.75</span>
+                    </div>
+                    <div class="list-group-item">E-Shhnli Fees<img src="img/tooltipicon.png" class="tooltipicon" alt="">
+                        <span>$2.5</span>
+                    </div>
+                    <div class="list-group-item">Int. Shipping<img src="img/tooltipicon.png" class="tooltipicon" alt=""><span>None</span>
+                    </div>
+                    <div class="list-group-item">Delivery Fees<img src="img/tooltipicon.png" class="tooltipicon" alt="" aria-describedby="tooltip-top"><span>None</span>
+                    </div>
+                    <div class="list-group-item">Subtotal<span>$14.24</span>
+                    </div>
+                    <div class="list-group-item">Discount<span>$0</span></div>
+                    <div class="list-group-item">Total ($)<span>$14.24</span>
+                    </div>
+                </div>
+                <div class="addcouponsec"><h3>Add your promo code</h3>
+                    <div class="form-group">
+                        <input placeholder="Coupon Code" type="text" class="form-control" value="">
+                        <button type="button" class="btn btn-primary">Apply</button>
+                    </div>
+                    <div><div class="Loading__loading___1m_fZ">
+                        <div class="Loading__bar___21yOt" style="background: rgb(255, 146, 88); width: 0%; display: none;">
+                            <div class="Loading__peg___3Y_28">
+
+                            </div>
+                        </div>
+                    </div>
+                        <div class="Loading__spinner___11Pm4">
+                            <div class="Loading__icon___3OOyu" style="display: none; border-color: rgb(255, 146, 88);">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="trypackagessec">
+                    <h3>Try E-Shhnli Packages</h3>
+                    <div class="form-group">
+                        <select class="form-control"><option value="0">Normal</option>
+                            <option value="22">No limits</option>
+                            <option value="23">More discounts</option>
+                            <option value="26">Platinum</option></select>
+                    </div>
+                </div>
+                <div class="totalcart">
+                    <span class="span1">
+                        <img src="/img/total.png" alt="">
+                        <img src="img/tooltipicon.png" class="tooltipicon" alt="">
+                        <br>
+                        <h4>Total </h4>
+                    </span>
+                    <span class="totalamount">
+                        <span class="span2">250.43 <span class="egpf">EGP</span>
+                        </span>
+                    </span>
+                </div>
+                <div>
+                    <button type="button" class="cartbutton btn btn-primary">Confirm &amp; Next
+                    </button>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+ </div>
+{% endblock %}
