@@ -10,6 +10,7 @@ Django==2.2.12
 django-classy-tags==1.0.0
 django-crispy-forms==1.9.1
 django-formtools==2.2
+django-heroku==0.3.1
 django-hreflang==2.2
 django-money==1.1
 django-phonenumber-field==5.0.0
@@ -40,6 +41,8 @@ requests==2.24.0
 requests-oauthlib==1.3.0
 six==1.15.0
 soupsieve==2.0.1
+sqlparse==0.4.1
 urllib3==1.25.9
 wcwidth==0.2.5
 webencodings==0.5.1
+whitenoise==5.2.0
