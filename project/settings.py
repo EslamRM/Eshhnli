@@ -17,8 +17,9 @@ SECRET_KEY = '0hbni8*81s!ub%vj&b==2#042du)92ihn($gp$a5mw_x7*p5z#'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
+DEBUG_PROPAGATE_EXCEPTIONS = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['localhost','https://eshhnli-app.herokuapp.com']
 
 
 # Application definition
@@ -152,10 +153,10 @@ MULTILINGUAL_LANGUAGES = (
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'statics')
 STATICFILES_DIRS = [
         os.path.join(BASE_DIR, 'static'),
 ]
+STATIC_ROOT = os.path.join(BASE_DIR, 'statics')
 # media settings
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
