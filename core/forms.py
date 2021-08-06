@@ -2,7 +2,7 @@ from django import forms
 from registration.forms import RegistrationFormUniqueEmail
 from django.utils.translation import gettext_lazy as _
 
-
+# commercial form for commercial order
 class CommercialForm(forms.Form):
     title = forms.CharField(help_text=_('Title'), max_length=300, required=True, widget=forms.TextInput
                             (attrs={'class': 'form-control'}))
@@ -15,7 +15,7 @@ class CommercialForm(forms.Form):
     file = forms.FileField(help_text=_('File Details'),widget=forms.TextInput
                             (attrs={'class': 'form-control'}))
 
-
+# profile form
 class ProfileForm(RegistrationFormUniqueEmail):
     full_name = forms.CharField(help_text=_('Full Name'), max_length=300, required=True, widget=forms.TextInput
                             (attrs={'class': 'form-control'}))
