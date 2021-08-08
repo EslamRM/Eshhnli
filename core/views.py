@@ -109,12 +109,9 @@ def support (request):
     else:
         return render(request,'support.html')
 
-
-
 def faq (request):
     profile = Profile.objects.filter(user=request.user)
     return render(request,'faq.html',{'profile':profile})
-
 
 @login_required
 def com(request):
@@ -161,10 +158,12 @@ def clear_com(request):
     clear_com = CommercialOrder.objects.filter(user=request.user)
     clear_com.delete()
     return HttpResponseRedirect('/orders/com')
+
 def clear_item_com(request,id):
     order_com = get_object_or_404(CommercialOrder,id=id)
     order_com.delete()
     return HttpResponseRedirect('/orders/com')
+
 def edit_item_com(request,id):
     order_com = get_object_or_404(CommercialOrder, id=id)
     order_com.title = request.POST.get('title1')
@@ -173,6 +172,7 @@ def edit_item_com(request,id):
     order_com.details = request.POST.get('details1')
     order_com.save()
     return HttpResponseRedirect('/orders/com')
+
 def clear_cart(request):
     clear_orders=Order.objects.filter(user=request.user)
     clear_orders.delete()
@@ -182,6 +182,7 @@ def clear_item(request,id):
     item = get_object_or_404(Order,id=id)
     item.delete()
     return HttpResponseRedirect('/cart')
+
 def edit_item(request,id):
     if request.method == 'POST':
         edit = get_object_or_404(Order,id=id)
@@ -194,6 +195,7 @@ def edit_item(request,id):
         return HttpResponseRedirect('/cart')
     else:
         return HttpResponseRedirect('/cart')
+    
 @login_required
 def add_cart(request):
     if request.method == 'POST':
@@ -230,6 +232,7 @@ def update(request,username):
     else:
         profile = Profile.objects.filter(user=request.user)
     return render(request,'base.html',{'profile':profile})
+
 @login_required
 def subscribe(request):
     if request.method == 'POST':
