@@ -1,28 +1,103 @@
+import os
 import requests
+import json
 import random
+from selectorlib import Extractor
 from bs4 import BeautifulSoup
 from ebaysdk.finding import Connection as finding
-
-from django.shortcuts import render ,HttpResponse,redirect,Http404
+from django.http import HttpResponseRedirect,JsonResponse
+from django.shortcuts import render ,HttpResponse,redirect,Http404,get_object_or_404
 from django.core.mail import send_mail
 from project.settings import EMAIL_HOST_USER
-from .models import Order
+from project import settings
+from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
+from .models import Order,Profile,CommercialOrder,Calculator,Subscribtion,Amazon
+from django.utils import translation
+from .paymob import api_key,auth,transaction_res,pay,create_order
+from django.views.generic.base import View
+from django.views.generic import UpdateView
 
 
+class ActivateLanguageView(View):
+    language_code = ''
+    redirect_to   = ''
+    def get(self, request, *args, **kwargs):
+        self.redirect_to = request.META.get('HTTP_REFERER')
+        self.language_code = kwargs.get('language_code')
+        translation.activate(self.language_code)
+        request.session[translation.LANGUAGE_SESSION_KEY] = self.language_code
+        return redirect(self.redirect_to)
 
+
+@login_required
+def payments(request):
+    profile = Profile.objects.filter(user=request.user)
+    if profile:
+        
+        billing_info = {}
+        for p in profile:
+            billing_info = {"apartment":p.address_1,"email": p.user.email,"floor": "NA",
+                            "first_name": p.full_name.split(' ')[0],
+                            "street":p.address_2,"building":"NA",
+                            "phone_number": str(p.phone_number),
+                            "shipping_method": "PKG", "postal_code": p.ZIP,"city": p.address_1,
+                            "country": p.country, "last_name": p.full_name.split(' ')[1],"state": p.state}
+        step1 = auth(api_key)
+        step2 = create_order(step1, request.POST.get('pay'), 'EGP')
+        step3 = pay(step2,75358, billing_info)
+        step4 = transaction_res(step3)
+        iframe = "https://accept.paymob.com/api/acceptance/iframes/96321?payment_token="
+        return HttpResponseRedirect(iframe + step3['payment_key'])
+    
+    else:
+        return redirect('/accounts/register')
+        
 def index(request):
-    return render(request,'index.html')
+    if request.user.is_authenticated:
+        profile = Profile.objects.filter(user=request.user)
+        return render(request, 'index.html', {'profile': profile})
+    else:
+        return render(request, 'index.html')
 
 def how_work (request):
-    return render(request,'how-work.html')
-
+    if request.user.is_authenticated:
+        profile = Profile.objects.filter(user=request.user)
+        return render(request, 'how-work.html', {'profile': profile})
+    else:
+        return render(request, 'how-work.html')
 def offers (request):
-    return render(request,'offer.html')
+    if request.user.is_authenticated:
+        proxies_list = ["128we199d10d9d24d1d80d80", "1e1y3fgje5yd3gj2edy39fgj3d18", "125v1b4n1v2b0n0v5b3nv8b0n",
+                        "1a2z5m1a4z1m2a0z0ma1z4m80",
+                        "128d19d9d20d0d11d2d13d8", "1e4y9fgje5yd6gj1edy2d9gj3d18", "128v1b9n9v2b0n0v1b1n2v8b0n",
+                        "1a2z5m1a4z1m2a0z0ma3z9m80",
+                        "134d21d3d29dd20d2d44d44"]
+        coupon = random.choice(proxies_list)
+        profile = Profile.objects.filter(user=request.user)
+        return render(request,'offer.html',{'coupon':coupon,'profile':profile})
+    else:
+        proxies_list = ["128we199d10d9d24d1d80d80", "1e1y3fgje5yd3gj2edy39fgj3d18", "125v1b4n1v2b0n0v5b3nv8b0n",
+                        "1a2z5m1a4z1m2a0z0ma1z4m80",
+                        "128d19d9d20d0d11d2d13d8", "1e4y9fgje5yd6gj1edy2d9gj3d18", "128v1b9n9v2b0n0v1b1n2v8b0n",
+                        "1a2z5m1a4z1m2a0z0ma3z9m80",
+                        "134d21d3d29dd20d2d44d44"]
+        coupon = random.choice(proxies_list)
+        return render(request,'offer.html',{'coupon':coupon})
 
+@login_required
 def orders(request):
-    return render(request,'orders.html')
+    profile = Profile.objects.filter(user=request.user)
+    commercial = CommercialOrder.objects.filter(user=request.user)
+    orders = Order.objects.filter(user=request.user)
+    items = orders.count() + commercial.count()
+    return render(request,'com.html',{'orders':orders,'items':items,'profile':profile,'commercial':commercial})
+@login_required
 def order(request):
-    return render(request,'order.html')
+    profile = Profile.objects.filter(user=request.user)
+    calculate = Calculator.objects.filter(user=request.user)
+    orders = Order.objects.filter(user=request.user)
+    return render(request,'order.html',{'orders':orders,'profile':profile,'calculate':calculate})
 def support (request):
     if request.method == 'POST':
         name = request.POST['name']
@@ -31,50 +106,100 @@ def support (request):
         send_mail(subject=name, message=message, from_email=request.user, recipient_list=[EMAIL_HOST_USER],
                   fail_silently=False)
         return HttpResponse('Email has been send successfully')
+
+    elif request.user.is_authenticated:
+        profile = Profile.objects.filter(user=request.user)
+        return render(request,'support.html',{'profile':profile})
+
     else:
         return render(request,'support.html')
 
 
-#def faq (request):
-    #return render(request,'faq.html')
 
+def faq (request):
+    profile = Profile.objects.filter(user=request.user)
+    return render(request,'faq.html',{'profile':profile})
+
+
+@login_required
+def com(request):
+    if request.method == 'POST':
+        price = request.POST['com_price']
+        price = ','.join([price[i:i+3] for i in range(0,len(price),3)])
+        commercial = CommercialOrder(
+            title=request.POST['com_title'],
+            quantity=request.POST['com_quantity'],
+            price=price +' EGP',
+            details=request.POST['com_text'],
+            file=request.FILES.get('com_file'),
+        )
+        commercial.user=request.user
+        commercial.save()
+        return HttpResponseRedirect('/orders/com/')
+    else:
+        profile = Profile.objects.filter(user=request.user)
+        commercial = CommercialOrder.objects.filter(user=request.user)
+        calculate = Calculator.objects.filter(user=request.user)
+        orders = Order.objects.filter(user=request.user)
+        items = orders.count() + commercial.count()
+        return render(request,'com.html',{'orders':orders,'items':items,'profile':profile,'calculate':calculate,'commercial':commercial})
+
+@login_required
+def com_all(request):
+    commercial = CommercialOrder.objects.filter(user=request.user)
+    orders = Order.objects.filter(user=request.user)
+    items = orders.count() + commercial.count()
+    return render(request, 'com.html', {'commercial': commercial, 'orders': orders, 'items': items})
+
+@login_required
 def cart(request):
-
     if request.user.is_authenticated:
-        orders = Order.objects.all()
+        calculate = Calculator.objects.filter(user=request.user)
+        orders = Order.objects.filter(user=request.user)
+        profile = Profile.objects.filter(user=request.user)
         count = orders.count()
-        return render(request, 'cart.html',{'orders':orders,'count':count})
-
     else:
         return redirect('/accounts/login/')
+    return render(request, 'cart.html',{'orders':orders,'count':count,'calculate':calculate,'profile':profile})
 
+def clear_com(request):
+    clear_com = CommercialOrder.objects.filter(user=request.user)
+    clear_com.delete()
+    return HttpResponseRedirect('/orders/com')
+def clear_item_com(request,id):
+    order_com = get_object_or_404(CommercialOrder,id=id)
+    order_com.delete()
+    return HttpResponseRedirect('/orders/com')
+def edit_item_com(request,id):
+    order_com = get_object_or_404(CommercialOrder, id=id)
+    order_com.title = request.POST.get('title1')
+    order_com.quantity = request.POST.get('qty1')
+    order_com.price = request.POST.get('price1')
+    order_com.details = request.POST.get('details1')
+    order_com.save()
+    return HttpResponseRedirect('/orders/com')
 def clear_cart(request):
-    Order.objects.all().delete()
-    return redirect('/cart')
+    clear_orders=Order.objects.filter(user=request.user)
+    clear_orders.delete()
+    return HttpResponseRedirect('/cart')
+
 def clear_item(request,id):
-    prd = Order.objects.get(id=id)
-    prd.delete()
-    return redirect('/cart')
+    item = get_object_or_404(Order,id=id)
+    item.delete()
+    return HttpResponseRedirect('/cart')
 def edit_item(request,id):
     if request.method == 'POST':
-        prd = Order.objects.get(id=id)
-        context = {
-            'prd':prd,
-            'logo':prd.logo_url,
-            'title':prd.title,
-            'price':prd.price,
-            'img':prd.img_url,
-            'url':prd.url,
-            'category':prd.category,
-            'color':prd.color,
-            'size':prd.size,
-            'qty':prd.Qty,
-        }
-
-        return HttpResponse(context)
+        edit = get_object_or_404(Order,id=id)
+        edit.title = request.POST.get('title')
+        edit.category = request.POST.get('category')
+        edit.size = request.POST.get('size')
+        edit.color = request.POST.get('color')
+        edit.Qty = request.POST.get('qty')
+        edit.save()
+        return HttpResponseRedirect('/cart')
     else:
-        return redirect('/cart')
-
+        return HttpResponseRedirect('/cart')
+@login_required
 def add_cart(request):
     if request.method == 'POST':
         new = Order(logo_url=request.POST['logo'],
@@ -85,15 +210,94 @@ def add_cart(request):
                     category=request.POST['category'],
                     color=request.POST['color'],
                     size=request.POST['size'],
-                    Qty=request.POST['qty']
+                    Qty=request.POST['qty'],
+                    promo=request.POST['promo'],
                     )
         new.user = request.user
         new.save()
-        return redirect('/cart/')
+        return HttpResponseRedirect('/cart')
     else:
         return redirect('/')
 
-    
+@login_required
+def update(request,username):
+    if request.method == 'POST':
+        new = get_object_or_404(User,username=username)
+        user = new.profile
+        user.full_name = request.POST.get('full_name')
+        new.email = request.POST.get('email')
+        new.save()
+        user.address_1 = request.POST.get('address_1')
+        user.address_2 = request.POST.get('address_2')
+        user.phone_number = request.POST.get('phone_number')
+        user.save()
+        return HttpResponseRedirect(request.path_info)
+    else:
+        profile = Profile.objects.filter(user=request.user)
+    return render(request,'base.html',{'profile':profile})
+@login_required
+def subscribe(request):
+    if request.method == 'POST':
+        sub = Subscribtion(subscribe=request.POST.get('subscribe'))
+        sub.user = request.user
+        sub.save()
+        return HttpResponseRedirect(request.path_info)
+    else:
+        return redirect('/')
+# Amazon scrape
+# Create an Extractor by reading from the YAML file
+e = Extractor.from_yaml_file(os.path.join(settings.BASE_DIR,'selectors.yml'))
+def scrape(url):  
+    headers = {
+        'dnt': '1',
+        'upgrade-insecure-requests': '1',
+        'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.61 Safari/537.36',
+        'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+        'sec-fetch-site': 'same-origin',
+        'sec-fetch-mode': 'navigate',
+        'sec-fetch-user': '?1',
+        'sec-fetch-dest': 'document',
+        'referer': 'https://www.amazon.com/',
+        'accept-language': 'en-GB,en-US;q=0.9,en;q=0.8',
+    }
+
+    # Download the page using requests
+    print("Downloading %s"%url)
+    r = requests.get(url, headers=headers)
+    # Simple check to check if page was blocked (Usually 503)
+    if r.status_code > 500:
+        if "To discuss automated access to Amazon data please contact" in r.text:
+            print("Page %s was blocked by Amazon. Please try using better proxies\n"%url)
+        else:
+            print("Page %s must have been blocked by Amazon as the status code was %d"%(url,r.status_code))
+        return None
+    # Pass the HTML of the page and create 
+    return e.extract(r.text)
+
+# product_data = []
+def amazon(request):
+    if request.method == 'POST':
+        URL = request.POST['url']
+        with open('output.jsonl','w') as outfile:
+            data = scrape(URL)
+            if data:
+                json.dump(data,outfile)
+                outfile.write("\n")
+        with open('output.jsonl') as file:
+            dat = json.loads(file.read())
+            new = Amazon(title=dat['name'],url = URL,price = dat['price'],img_url=dat['images'][2:64])
+            new.save()
+        amz = Amazon.objects.filter(url = URL)
+        context = {
+            'title':amz.title,
+            'price':amz.price,
+            'img':amz.img_url,
+            'url':amz.url,
+        }
+        print(context)
+        return render(request,'cart.html',context)
+    else:
+        return HttpResponseRedirect('/')    
 #- ecommerce sites api
 
 headers = {"User-Agent": 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.122 Safari/537.36'}
@@ -135,14 +339,48 @@ proxies = {'https': random.choice(proxies_list)}
 #     price = int(round(float(item.currentprice.string)))
 #     url = item.viewitemurl.string.lower()
 # #########################
+import re
 def api(request):
+    # scrape data from only this websites [6pm,carters,gap,guess,uspoloassn,ralphlauren]
     if request.method == 'POST':
         URL = request.POST['url']
+        if not re.match('(?:http|ftp|https)://', URL):
+            raise Http404("Enter A Valid URL")
 
-        page = requests.get(URL, headers=headers)
+        page = requests.get(URL, headers=headers,verify=False)
         soup = BeautifulSoup(page.content, features='lxml')
-
-        if '6pm.com' in URL:
+        if 'amazon.com' in URL:
+            import urllib3
+            urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+            try:
+                with open('output.jsonl','w') as outfile:
+                    data = scrape(URL)
+                    if data:
+                        json.dump(data,outfile)
+                        outfile.write("\n")
+                with open('output.jsonl') as file:
+                    dat = json.loads(file.read())
+                    new = Amazon(title=dat['name'],url = URL,price = dat['price'],img_url=dat['images'][2:64])
+                    new.save()
+                amz = Amazon.objects.get(url = URL)
+                print(Amazon.objects.all())
+                context = {
+                    'title':amz.title,
+                    'price':amz.price,
+                    'img':amz.img_url,
+                    'url':amz.url,
+                }
+                return render(request,'cart.html',context)
+            except:
+                amz = Amazon.objects.get(url = URL)
+                context = {
+                    'title':amz.title,
+                    'price':amz.price,
+                    'img':amz.img_url,
+                    'url':amz.url,
+                }
+                return render(request,'cart.html',context)
+        elif '6pm.com' in URL:
             try:
                 logo = URL.split('/')[2]
                 title = soup.find(class_='av').text

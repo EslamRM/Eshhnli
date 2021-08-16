@@ -1,9 +1,12 @@
 {% extends 'base.html' %}
 {% load static %}
-
+{% load i18n %}
 {% block content %}
-
-<div class="row">
+<div class="container-fluid">
+    <div class="cartItems row">
+     <div class="paddinginlg col-md-12">
+    <div class="row">
+        {% for order in orders %}
     <div class="orderblock col-lg-9 col-md-9"><div class="iteminside row">
         <div class="col-lg-2 col-md-2 col-sm-2 col-12">
             <div class="imgdiv">
@@ -11,79 +14,78 @@
             </div>
         </div>
         <div class="col-lg-7 col-md-7 col-sm-12 col-12">
-            <div class="itemdiv">
-                <h2><img src="/img/brands/amazon-logo.png" alt="" width="70.8px"> | Beam Electronics Universal Smartphone Car Air...</h2>
-                <a target="_blank" href="https://www.amazon.com/Beam-Electronics-Smartphone-Car-Mount/dp/B073R68TSH/ref=sr_1_1?dchild=1&amp;fst=as%3Aoff&amp;qid=1594219231&amp;rnid=16225009011&amp;s=electronics&amp;sr=1-1">https://www.amazon.com/Beam-Electronics-Smartphone-Car-Mount/dp/B073R6...</a>
+            <div class="itemdiv ml-3">
+                <h2>{{ order.title }}</h2>
+                <a target="_blank" href="{{order.url}}">{{ order.url|slice:":80" }}</a>
                 <div class="itemData"><h5>Category <br>
-                    <span>Mobile Accessory/Case/Screen Protector</span> </h5>
+                    <span>{{ order.category }}</span> </h5>
                     <h5>Color <br>
-                        <span>N/A</span></h5>
+                        <span>{{ order.color }}</span></h5>
                     <h5>Size <br>
-                        <span>N/A</span> </h5>
-                    <h5>Qty<br><span>1</span></h5>
-                    <h5>Price<br><span>$9.99</span></h5>
+                        <span>{{ order.size }}</span> </h5>
+                    <h5>Qty<br><span>{{ order.Qty }}</span></h5>
+                    <h5>Price<br><span>{{ order.price }}</span></h5>
                 </div></div>
         </div>
         <div class="itemStatus col-lg-3 col-md-3 col-sm-12 col-12">
-            <span class="">Pending</span>
-        </div>
-        <div class="no-padding stepsdiv displayprp col-lg-12 col-md-12 col-sm-12 col-12">
-
+            <span class="">{{ order.statue }}</span>
         </div>
     </div>
-    </div>
+     </div>
+        {% endfor %}
     <div class="no-padding col-lg-3 col-md-3">
         <div style="position: sticky; top: 105px;">
 
             <div class="breakdowndiv breakdowndivcheckout">
                 <div class="list-group">
-                    <div class="list-group-item">Total Online Price
-                        <img src="/img/tooltipicon.png" class="tooltipicon" alt="">
-                        <span>$9.99</span>
+                    <form method="post" action="{% url 'payment' %}">
+                        {% csrf_token %}
+                    {% if calculate %}
+                    {% for cal in calculate %}
+                    <div class="list-group-item">{% trans "Total Online Price" %}<img src="{% static 'images/tooltipicon.png' %}" class="tooltipicon" alt="">
+                        <span>{{ cal.OnlinePrice }}</span>
                     </div>
-                    <div class="list-group-item">Customs
-                        <img src="/img/tooltipicon.png" class="tooltipicon" alt="">
-                        <span>$0</span>
+                    <div class="list-group-item">{% trans "Customs" %}<img src="{% static 'images/tooltipicon.png' %}" class="tooltipicon" alt="" aria-describedby="tooltip-top"><span>{{ cal.Customs }}</span>
                     </div>
-                    <div class="list-group-item">VAT<img src="/img/tooltipicon.png" class="tooltipicon" alt="">
-                        <span>$1.75</span></div>
-                    <div class="list-group-item">Gebhaly Fees<img src="/img/tooltipicon.png" class="tooltipicon" alt="">
-                        <span>$2.5</span>
+                    <div class="list-group-item">{% trans "VAT" %}<img src="{% static 'images/tooltipicon.png' %}" class="tooltipicon" alt="" aria-describedby="tooltip-top">
+                        <span>{{ cal.VAT }}</span>
                     </div>
-                    <div class="list-group-item">Int. Shipping
-                        <img src="/img/tooltipicon.png" class="tooltipicon" alt=""><span>$0</span>
+                    <div class="list-group-item">{% trans "E-Shhnli Fees" %}<img src="{% static 'images/tooltipicon.png' %}" class="tooltipicon" alt="">
+                        <span>{{ cal.EShhnliFees }}</span>
                     </div>
-                    <div class="list-group-item">Delivery Fees
-                        <img src="/img/tooltipicon.png" class="tooltipicon" alt="">
-                        <span>$4.95</span><
-                        /div>
-                        <div class="list-group-item">Subtotal<span>$19.19</span>
-                        </div>
-                        <div class="list-group-item">Discount<span>$0</span>
-                        </div>
-                        <div class="list-group-item">Total ($)<
-                            span>$19.19</span><
-                            /div>
-                        </div>
-                        <div class="totalcart"><span class="span1">
-                            <img src="/img/total.png" alt="">
-                            <img src="/img/tooltipicon.png" class="tooltipicon" alt="">
-                            <br>
-                            <h4>Total </h4></span>
-                            <span class="totalamount">
-                                <span class="span2">309.87
-                                    <span class="egpf">EGP</span>
-                                </span>
-                            </span>
-                        </div>
-                        <div>
-                            <button type="button" class="changepayment2 btn btn-primary">Pay Now</button>
-                        </div>
-                        <div>
+                    <div class="list-group-item">{% trans "Int. Shipping" %}<img src="{% static 'images/tooltipicon.png' %}" class="tooltipicon" alt="">
+                        <span>{{ cal.IntShipping }}</span>
+                    </div>
+                    <div class="list-group-item">{% trans "Delivery Fees" %}<img src="{% static 'images/tooltipicon.png' %}" class="tooltipicon" alt="" aria-describedby="tooltip-top">
+                        <span>{{ cal.DeliveryFees }}</span>
+                    </div>
+                    <div class="list-group-item">{% trans "Subtotal" %}<span>{{ cal.Subtotal }}</span>
+                    </div>
+                    <div class="list-group-item">{% trans "Discount" %}<span>{{ cal.Subtotal }}</span></div>
+                    <div class="list-group-item"><span><input name="pay" value="{{ cal.Total }}" hidden></span>
+                    </div>
+                </div>
 
-                        </div>
-                    </div>
+                <div class="totalcart">
+                    <span class="span1">
+                        <img src="{% static 'images/total.png' %}" alt="">
+                        <img src="{% static 'images/tooltipicon.png' %}" class="tooltipicon" alt="">
+                        <br>
+                        <h4>{% trans "Total" %} </h4>
+                    </span>
+                    <span class="totalamount">
+                        <span class="span2">{{ cal.Total }}<span class="egpf"> EGP</span>
+                        </span>
+                    </span>
+                </div>
+                {% endfor %}
+                {% endif %}
                 </div>
             </div>
         </div>
+    </div>
+</div>
+</div>
+ </div>
+</div>
 {% endblock %}

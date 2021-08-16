@@ -1,14 +1,15 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load i18n %}
 {% block content %}
 <body>
 
 		  <!---------------- start Support section---------------------->
 		  <div class="support-section">
-			  <div class="support-header">
-				  <h1>Support Section</h1>
-				  <p>Shanli is an Egyptian registered company that provides online shopping services.</p>
-				  <h5>Please enter your information below and we will respond.</h5>
+			  <div class="support-header text-center">
+				  <h1>{% trans "Support Section" %}</h1>
+				  <p>{% trans "E-shhnli is an Egyptian registered company that provides online shopping services." %}</p>
+				  <h5>{% trans "Please enter your information below and we will respond." %}</h5>
 			  </div>
 			  <div class="container">
                 </p>

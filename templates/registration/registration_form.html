@@ -12,7 +12,7 @@
 			  <div class="container">
 				  <div class="row">
 				  <div class="register-desc col-7 d-none d-lg-block d-xl-none d-xl-block">
-					  <h2>Wellcome To Shahnli</h2>
+					  <h2>{% trans "Wellcome To Shahnli" %}</h2>
 					  <img src="{% static 'images/not.svg' %}" alt="">
 				  </div>
 				  <div class="register-form  col-offset-2 col-lg-4 text-center col-sm-12 col-md-12">
@@ -20,7 +20,7 @@
 					   {% csrf_token %}
                        <h5><img src="{% static 'images/profile.svg' %}" alt=""></h5>
                         {{form|crispy}}
-                       <button type="submit" class="btn btn-block btn-primary" >Create Account</button>
+                       <button type="submit" class="btn btn-block btn-primary" >{% trans "Create Account" %}</button>
                        <h5 class="or">OR</h5>
 					   <a class="btn btn-block btn-danger  mt-4" href="{% url 'auth_login' %}">{% trans "Login" %}</a>
 				   </form>
